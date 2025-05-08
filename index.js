@@ -11,7 +11,7 @@
 // Visually track session progress (e.g., with a progress bar or Pomodoro icons).
 const WORK_TIME = 0.5 * 60;
 const SHORT_BREAK_TIME = 0.25 * 60;
-const LONG_BREAK_TIME = 15 * 60;
+const LONG_BREAK_TIME = 0.3 * 60;
 const TOTAL_SESSIONS = 4;
 
 const sessionNameDiv = document.getElementById("session-name");
@@ -40,19 +40,27 @@ function startTimer() {
     if (timeLeft === 0) {
       clearInterval(timer);
       if (isWorking) {
-        sessionNameDiv.textContent = "break";
+        if (currentSession === TOTAL_SESSIONS) {
+          sessionNameDiv.textContent = "LongBreak";
+          totalTime = LONG_BREAK_TIME;
+          timeLeft = LONG_BREAK_TIME;
+          currentSession = 0;
+        } else {
+          sessionNameDiv.textContent = "break";
+          totalTime = SHORT_BREAK_TIME;
+          timeLeft = SHORT_BREAK_TIME;
+        }
         isWorking = false;
-        totalTime = SHORT_BREAK_TIME;
-        timeLeft = SHORT_BREAK_TIME;
         startTimer();
         return;
       }
+      currentSession++;
       sessionNameDiv.textContent = "working";
       isWorking = true;
       totalTime = WORK_TIME;
       timeLeft = WORK_TIME;
       startTimer();
     }
-  }, 1000);
+  }, 100);
 }
 startTimer();
